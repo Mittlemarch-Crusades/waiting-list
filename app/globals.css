@@ -1,0 +1,77 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+  --background: #05070c;
+  --background-soft: #0b1118;
+  --panel: rgba(10, 16, 24, 0.72);
+  --panel-strong: rgba(11, 17, 24, 0.9);
+  --text: #f5efe5;
+  --muted: #9ca8b5;
+  --accent: #d59a43;
+  --accent-soft: rgba(213, 154, 67, 0.2);
+  --line: rgba(255, 255, 255, 0.08);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at top, rgba(214, 160, 80, 0.08), transparent 28%),
+    linear-gradient(180deg, #081018 0%, #05070c 35%, #05070c 100%);
+  color: var(--text);
+}
+
+body::selection {
+  background: rgba(213, 154, 67, 0.35);
+  color: #fff9ef;
+}
+
+@layer base {
+  * {
+    @apply border-white/10;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply tracking-[0.02em];
+  }
+}
+
+@layer components {
+  .container-shell {
+    @apply mx-auto w-full max-w-7xl px-5 sm:px-6 lg:px-8;
+  }
+
+  .panel {
+    @apply rounded-[28px] border border-white/10 bg-[rgba(10,16,24,0.72)] backdrop-blur-xl;
+    box-shadow: 0 28px 80px rgba(0, 0, 0, 0.45);
+  }
+
+  .gold-frame {
+    box-shadow:
+      inset 0 0 0 1px rgba(242, 204, 143, 0.08),
+      0 0 0 1px rgba(255, 255, 255, 0.02),
+      0 24px 60px rgba(0, 0, 0, 0.35);
+  }
+
+  .button-primary {
+    @apply inline-flex items-center justify-center rounded-full border border-amber-300/30 bg-gradient-to-b from-amber-300/25 to-amber-500/10 px-6 py-3 text-sm font-semibold uppercase tracking-[0.24em] text-amber-100 transition duration-300 hover:-translate-y-0.5 hover:border-amber-200/50 hover:text-white;
+    box-shadow: 0 0 30px rgba(213, 154, 67, 0.22);
+  }
+
+  .button-secondary {
+    @apply inline-flex items-center justify-center rounded-full border border-white/15 bg-white/5 px-6 py-3 text-sm font-semibold uppercase tracking-[0.24em] text-stone-100 transition duration-300 hover:-translate-y-0.5 hover:border-white/25 hover:bg-white/10;
+  }
+
+  .section-kicker {
+    @apply text-xs font-semibold uppercase tracking-[0.38em] text-amber-200/70;
+  }
+}
