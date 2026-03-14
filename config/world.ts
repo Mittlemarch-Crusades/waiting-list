@@ -44,9 +44,10 @@ export const siteContent = {
       "Replace these placeholders with concept art, key art, or environmental stills as the world of Mittlemarch comes into focus.",
     items: [
       {
-        title: "The March of Kings",
-        image: "/images/mittlemarch-cavalry.jpg",
-        fallback: "Cavalry under a storm-burned sky"
+        title: "The Crownwatch Range",
+        image: "/images/mittlemarch-mountains.jpg",
+        fallback:
+          "The peaks of Crownwatch stand over the old roads of Mittlemarch."
       },
       {
         title: "Shrine of Ashlight",
