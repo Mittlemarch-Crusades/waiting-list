@@ -28,7 +28,10 @@ const playstyles = ["PvP", "PvE", "Exploration", "Crafting", "Raids"];
 export function WaitlistForm() {
   const [form, setForm] = useState<FormState>(initialState);
   const [errors, setErrors] = useState<Partial<Record<keyof FormState, string>>>({});
-  const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
+  const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error" | "exists">(
+    "idle"
+  );
+  const [serverMessage, setServerMessage] = useState<string>("");
 
   const isValid = useMemo(() => {
     return form.email.trim() !== "" && /\S+@\S+\.\S+/.test(form.email) && form.favoriteMmorpg.trim() !== "";
@@ -58,31 +61,45 @@ export function WaitlistForm() {
     event.preventDefault();
 
     if (!validate()) {
+      setServerMessage("");
       setStatus("error");
       return;
     }
 
     setStatus("submitting");
+    setServerMessage("");
 
     const payload = {
-      ...form,
-      submittedAt: new Date().toISOString()
+      ...form
     };
 
     try {
-      const existing = JSON.parse(localStorage.getItem("mittlemarch-waitlist") ?? "[]");
-      localStorage.setItem("mittlemarch-waitlist", JSON.stringify([payload, ...existing]));
-
-      await fetch("/api/waitlist", {
+      const response = await fetch("/api/waitlist", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload)
       });
 
+      const data = (await response.json()) as { ok?: boolean; error?: string; code?: string };
+
+      if (!response.ok) {
+        if (response.status === 409 || data.code === "already_exists") {
+          setStatus("exists");
+          setServerMessage(data.error ?? "This email is already on the waitlist.");
+          return;
+        }
+
+        setStatus("error");
+        setServerMessage(data.error ?? "We could not save your signup just now.");
+        return;
+      }
+
       setForm(initialState);
       setStatus("success");
+      setServerMessage("");
     } catch {
       setStatus("error");
+      setServerMessage("Network trouble kept us from recording your name. Please try again.");
     }
   };
 
@@ -148,7 +165,7 @@ export function WaitlistForm() {
                 </button>
 
                 <p className="text-sm text-stone-400">
-                  This demo stores submissions in local storage and posts to a mock Next.js route so you can swap in Supabase, Firebase, or a real backend later.
+                  Signups are sent to a secure Next.js endpoint and stored in Supabase.
                 </p>
 
                 {status === "success" ? (
@@ -159,7 +176,13 @@ export function WaitlistForm() {
 
                 {status === "error" ? (
                   <p className="rounded-2xl border border-rose-300/20 bg-rose-400/10 px-4 py-3 text-sm text-rose-200">
-                    A few details still need attention before we can add you to the waitlist.
+                    {serverMessage || "A few details still need attention before we can add you to the waitlist."}
+                  </p>
+                ) : null}
+
+                {status === "exists" ? (
+                  <p className="rounded-2xl border border-amber-300/20 bg-amber-400/10 px-4 py-3 text-sm text-amber-100">
+                    {serverMessage || "This email is already on the waitlist."}
                   </p>
                 ) : null}
               </form>
@@ -176,7 +199,7 @@ export function WaitlistForm() {
               <div className="mt-8 rounded-[24px] border border-white/10 bg-white/5 p-6">
                 <p className="text-xs uppercase tracking-[0.3em] text-amber-200/75">Backend Ready</p>
                 <p className="mt-3 text-base leading-relaxed text-stone-300">
-                  The submit flow is intentionally isolated. Replace the mock API route with your preferred service and keep the UI untouched.
+                  The submit flow is now wired for Supabase through the server route, so you can keep the frontend stable as the backend grows.
                 </p>
               </div>
             </aside>

@@ -58,18 +58,19 @@ Typography is configured in `app/layout.tsx`, where you can swap the heading, se
 The waitlist form currently:
 
 - validates on the client
-- stores submissions in browser local storage under `mittlemarch-waitlist`
+- validates again on the server
 - posts to `app/api/waitlist/route.ts`
+- inserts records into Supabase via the REST endpoint
+- handles duplicate emails gracefully
 
-To connect a real backend:
+To finish the Supabase setup:
 
-1. Replace the fetch target in `components/waitlist-form.tsx`.
-2. Remove or repurpose the local storage block if you no longer want local persistence.
-3. Swap the mock route for one of these:
-   - Supabase insert
-   - Firebase Firestore document write
-   - Resend / email service call
-   - Custom backend API
+1. Add your project keys to `.env.local`.
+2. Run the SQL in `supabase/waitlist.sql` inside the Supabase SQL editor.
+3. Keep `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` set.
+4. Optionally add `SUPABASE_SERVICE_ROLE_KEY` for a stricter server-only setup.
+
+The route will use `SUPABASE_SERVICE_ROLE_KEY` if present, otherwise it falls back to the publishable key and the insert policy from the SQL file.
 
 The form payload already includes:
 
@@ -78,7 +79,6 @@ The form payload already includes:
 - `favoriteMmorpg`
 - `playstyle`
 - `alphaTesting`
-- `submittedAt`
 
 ## Notes
 

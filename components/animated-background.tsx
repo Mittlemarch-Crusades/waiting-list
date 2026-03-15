@@ -5,6 +5,20 @@ import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion
 import { useRef } from "react";
 
 const HERO_ART = "/images/mittlemarch-cavalry.jpg";
+const EMBERS = [
+  { left: "8%", bottom: "9%", width: 4, height: 4, delay: "0s", duration: "7.8s", driftX: "18px", rise: "-120px", rotate: "18deg", opacity: 0.9 },
+  { left: "16%", bottom: "11%", width: 6, height: 3, delay: "0.7s", duration: "9.4s", driftX: "42px", rise: "-168px", rotate: "38deg", opacity: 0.8 },
+  { left: "21%", bottom: "7%", width: 3, height: 3, delay: "1.4s", duration: "6.8s", driftX: "-16px", rise: "-132px", rotate: "-14deg", opacity: 0.78 },
+  { left: "29%", bottom: "12%", width: 5, height: 3, delay: "2.1s", duration: "8.7s", driftX: "26px", rise: "-152px", rotate: "24deg", opacity: 0.88 },
+  { left: "37%", bottom: "8%", width: 4, height: 4, delay: "0.9s", duration: "7.1s", driftX: "-24px", rise: "-116px", rotate: "-22deg", opacity: 0.72 },
+  { left: "43%", bottom: "13%", width: 6, height: 4, delay: "3.1s", duration: "10.2s", driftX: "56px", rise: "-188px", rotate: "41deg", opacity: 0.84 },
+  { left: "51%", bottom: "9%", width: 3, height: 3, delay: "1.8s", duration: "6.6s", driftX: "14px", rise: "-110px", rotate: "16deg", opacity: 0.76 },
+  { left: "58%", bottom: "12%", width: 5, height: 3, delay: "2.6s", duration: "8.9s", driftX: "-36px", rise: "-164px", rotate: "-35deg", opacity: 0.82 },
+  { left: "64%", bottom: "7%", width: 4, height: 4, delay: "0.5s", duration: "7.5s", driftX: "22px", rise: "-124px", rotate: "19deg", opacity: 0.7 },
+  { left: "71%", bottom: "10%", width: 6, height: 3, delay: "3.5s", duration: "9.8s", driftX: "-48px", rise: "-176px", rotate: "-44deg", opacity: 0.86 },
+  { left: "77%", bottom: "8%", width: 3, height: 3, delay: "1.1s", duration: "6.9s", driftX: "17px", rise: "-118px", rotate: "14deg", opacity: 0.74 },
+  { left: "84%", bottom: "11%", width: 5, height: 4, delay: "2.9s", duration: "8.4s", driftX: "-28px", rise: "-146px", rotate: "-28deg", opacity: 0.8 }
+] as const;
 
 export function AnimatedBackground() {
   const reduceMotion = useReducedMotion();
@@ -109,15 +123,21 @@ export function AnimatedBackground() {
       {!reduceMotion ? (
         <>
           <div className="absolute right-[10%] top-[16%] h-40 w-40 rounded-full bg-emerald-200/10 blur-3xl animate-drift" />
-          {Array.from({ length: 18 }).map((_, index) => (
+          {EMBERS.map((ember, index) => (
             <span
-              key={index}
-              className="absolute h-1 w-1 rounded-full bg-amber-100/60 animate-particle"
+              key={`${ember.left}-${index}`}
+              className="ember absolute rounded-full bg-gradient-to-b from-amber-100 via-amber-400 to-orange-600"
               style={{
-                left: `${10 + (index % 6) * 12}%`,
-                bottom: `${8 + Math.floor(index / 6) * 8}%`,
-                animationDelay: `${index * 0.45}s`,
-                animationDuration: `${8 + (index % 5)}s`
+                left: ember.left,
+                bottom: ember.bottom,
+                width: `${ember.width}px`,
+                height: `${ember.height}px`,
+                opacity: ember.opacity,
+                ["--ember-delay" as string]: ember.delay,
+                ["--ember-duration" as string]: ember.duration,
+                ["--ember-drift-x" as string]: ember.driftX,
+                ["--ember-rise" as string]: ember.rise,
+                ["--ember-rotate" as string]: ember.rotate
               }}
             />
           ))}

@@ -75,3 +75,40 @@ body::selection {
     @apply text-xs font-semibold uppercase tracking-[0.38em] text-amber-200/70;
   }
 }
+
+@keyframes emberDrift {
+  0% {
+    transform: translate3d(0, 0, 0) scale(0.75) rotate(0deg);
+    opacity: 0;
+  }
+
+  12% {
+    opacity: 0.95;
+  }
+
+  45% {
+    opacity: 0.8;
+  }
+
+  75% {
+    opacity: 0.35;
+  }
+
+  100% {
+    transform: translate3d(var(--ember-drift-x, 24px), calc(var(--ember-rise, -150px)), 0)
+      scale(0.2) rotate(var(--ember-rotate, 24deg));
+    opacity: 0;
+  }
+}
+
+.ember {
+  animation-name: emberDrift;
+  animation-duration: var(--ember-duration, 10s);
+  animation-delay: var(--ember-delay, 0s);
+  animation-iteration-count: infinite;
+  animation-timing-function: cubic-bezier(0.22, 0.61, 0.36, 1);
+  box-shadow:
+    0 0 10px rgba(255, 184, 76, 0.42),
+    0 0 20px rgba(255, 112, 31, 0.2);
+  will-change: transform, opacity;
+}
