@@ -165,7 +165,7 @@ export function WaitlistForm() {
                 </button>
 
                 <p className="text-sm text-stone-400">
-                  Signups are sent to a secure Next.js endpoint and stored in Supabase.
+                  Signups are sent a securely stored database for future communications and early access.
                 </p>
 
                 {status === "success" ? (
