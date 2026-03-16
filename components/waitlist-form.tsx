@@ -177,7 +177,7 @@ export function WaitlistForm() {
                 </div>
 
                 <Field
-                  label="Favorite MMORPG"
+                  label="Favorite MMORPG or RPG"
                   required
                   value={form.favoriteMmorpg}
                   onChange={(value) => updateField("favoriteMmorpg", value)}
