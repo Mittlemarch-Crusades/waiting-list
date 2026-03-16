@@ -82,29 +82,45 @@ NEXT_PUBLIC_APP_URL=http://localhost:3000
 
 ## Deployment
 
-The repository is ready to deploy to Vercel as a standard Next.js App Router project.
+Netlify supports modern Next.js App Router projects with zero configuration through its OpenNext adapter, including route handlers like `app/api/waitlist/route.ts`.
+
+### Local Development
+
+You can keep using:
+
+```bash
+npm run dev
+```
+
+Next.js will load `.env.local` automatically in local development, so this project will continue to work locally without Netlify CLI as long as your `.env.local` contains:
+
+```env
+SUPABASE_URL=https://your-project.supabase.co
+SUPABASE_SECRET_KEY=your_sb_secret_key_here
+NEXT_PUBLIC_APP_URL=http://localhost:3000
+```
 
 ### 1. Prepare Supabase
 
 1. Open your Supabase project.
-2. In the SQL Editor, run `supabase/waitlist.sql`.
-3. In the Supabase dashboard, go to Project Settings -> API.
-4. Copy:
+2. In SQL Editor, run `supabase/waitlist.sql`.
+3. In Supabase Project Settings -> API, copy:
    - `Project URL`
    - `secret key`
 
-### 2. Connect The Repository To Vercel
+### 2. Connect The Repository To Netlify
 
-1. Open Vercel and create a new project.
-2. Import the GitHub repository: `Mittlemarch-Crusades/waiting-list`.
-3. Keep the framework preset as `Next.js`.
-4. Do not put Supabase secrets in GitHub repository secrets for this deployment flow.
+1. Open Netlify.
+2. Choose `Add new site` -> `Import an existing project`.
+3. Connect GitHub and select `Mittlemarch-Crusades/waiting-list`.
+4. Netlify should detect the project as `Next.js` automatically.
+5. Leave the build command as `npm run build` if Netlify asks.
 
-For a normal Vercel deployment, environment variables belong in Vercel project settings, not GitHub secrets. GitHub secrets are only needed if you are deploying through GitHub Actions.
+Netlify's current Next.js docs say App Router and route handlers are supported out of the box through the OpenNext adapter.
 
-### 3. Add Vercel Environment Variables
+### 3. Add Netlify Environment Variables
 
-In Vercel -> Project Settings -> Environment Variables, add:
+In Netlify -> Site configuration -> Environment variables, add:
 
 - `SUPABASE_URL`
 - `SUPABASE_SECRET_KEY`
@@ -112,38 +128,41 @@ In Vercel -> Project Settings -> Environment Variables, add:
 Optional:
 
 - `NEXT_PUBLIC_APP_URL`
-  Set this to your production site URL after Vercel gives you one.
+  Set this to your Netlify production URL or custom domain.
 
-Use these values:
+Example production values:
 
 ```env
 SUPABASE_URL=https://your-project.supabase.co
 SUPABASE_SECRET_KEY=your_sb_secret_key_here
-NEXT_PUBLIC_APP_URL=https://your-vercel-domain.vercel.app
+NEXT_PUBLIC_APP_URL=https://your-site-name.netlify.app
 ```
+
+Do not put these in GitHub repository secrets for normal Netlify Git-based deploys. Set them in Netlify directly.
 
 ### 4. Deploy
 
-1. Trigger the first Vercel deployment.
-2. Wait for the production build to succeed.
+1. Trigger the first Netlify deployment.
+2. Wait for the production build to complete.
 3. Open the deployed site.
-4. Submit a test waitlist entry with a real email you control.
-5. Check `public.waitlist_signups` in Supabase to confirm the row was created.
+4. Submit a real test waitlist entry.
+5. In Supabase Table Editor, confirm the row appears in `public.waitlist_signups`.
 
 ### 5. After The First Successful Deploy
 
-1. If you plan to use a custom domain, add it in Vercel and update `NEXT_PUBLIC_APP_URL`.
-2. Rotate the secret key immediately if it was ever pasted anywhere public by mistake.
-3. Keep `.env.local` local-only and never commit it.
+1. If you add a custom domain in Netlify, update `NEXT_PUBLIC_APP_URL`.
+2. Keep `.env.local` local-only and never commit it.
+3. Keep `SUPABASE_SECRET_KEY` only in local env files and Netlify environment variables.
+4. Rotate the secret key immediately if it is ever exposed.
 
 ### Deployment Checklist
 
 - The repo contains no committed secret key.
 - `.env.local` stays out of git.
-- `SUPABASE_SECRET_KEY` is configured only in local env files and Vercel env settings.
+- `SUPABASE_SECRET_KEY` is configured only in local env files and Netlify env settings.
 - The waitlist table exists in Supabase.
 - The site builds locally with `npm run build`.
-- The site builds in Vercel.
+- The site deploys successfully on Netlify.
 
 Security checklist:
 

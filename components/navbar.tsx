@@ -61,7 +61,7 @@ export function Navbar() {
         </nav>
 
         <a href="#waitlist" className="button-secondary hidden md:inline-flex">
-          Enter the Waitlist
+          Prepare for the battle
         </a>
       </div>
     </motion.header>
