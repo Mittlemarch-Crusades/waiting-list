@@ -51,7 +51,7 @@ export async function POST(request: Request) {
     return NextResponse.json(
       {
         ok: false,
-        error: "Server configuration is incomplete. Add SUPABASE_SECRET_KEY to .env.local."
+        error: "Server configuration is incomplete. Add SUPABASE_URL and SUPABASE_SECRET_KEY to the server environment."
       },
       { status: 500 }
     );
