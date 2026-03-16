@@ -16,12 +16,18 @@ export function Footer() {
         <div className="flex flex-col gap-5 lg:items-end">
           <div className="flex flex-wrap gap-4 text-sm uppercase tracking-[0.24em] text-stone-300">
             {siteContent.footer.socials.map((social) => (
-              <a key={social} href="#top" className="transition hover:text-amber-100">
-                {social}
+              <a
+                key={social.label}
+                href={social.href}
+                target={social.href.startsWith("http") ? "_blank" : undefined}
+                rel={social.href.startsWith("http") ? "noreferrer" : undefined}
+                className="transition hover:text-amber-100"
+              >
+                {social.label}
               </a>
             ))}
           </div>
-          <p className="text-sm text-stone-500">© {new Date().getFullYear()} {WORLD_NAME}. All rights reserved.</p>
+          <p className="text-sm text-stone-500">(c) {new Date().getFullYear()} {WORLD_NAME}. All rights reserved.</p>
         </div>
       </div>
     </footer>

@@ -11,9 +11,3 @@ create table if not exists public.waitlist_signups (
 alter table public.waitlist_signups enable row level security;
 
 drop policy if exists "Allow public waitlist inserts" on public.waitlist_signups;
-
-create policy "Allow public waitlist inserts"
-on public.waitlist_signups
-for insert
-to anon, authenticated
-with check (true);

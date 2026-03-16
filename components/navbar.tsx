@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import Image from "next/image";
 import { useEffect, useState } from "react";
 
 import { WORLD_NAME, siteContent } from "@/config/world";
@@ -28,15 +29,21 @@ export function Navbar() {
     >
       <div className="container-shell flex items-center justify-between py-4">
         <a href="#top" className="group inline-flex items-center gap-3">
-          <span className="flex h-11 w-11 items-center justify-center rounded-full border border-amber-200/20 bg-white/5 text-lg text-amber-200 shadow-glow">
-            M
+          <span className="relative h-14 w-14 shrink-0 drop-shadow-[0_0_24px_rgba(85,140,255,0.2)]">
+            <Image
+              src="/images/mittlemarch-logo-removebg.png"
+              alt="Mittlemarch logo"
+              fill
+              priority
+              className="object-contain"
+            />
           </span>
           <span className="flex flex-col">
             <span className="font-[family-name:var(--font-heading)] text-lg uppercase tracking-[0.28em] text-stone-100">
               {WORLD_NAME}
             </span>
             <span className="text-xs uppercase tracking-[0.3em] text-stone-400 transition group-hover:text-stone-200">
-              MMORPG Teaser
+              Teaser
             </span>
           </span>
         </a>

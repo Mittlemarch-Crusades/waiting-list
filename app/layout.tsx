@@ -24,7 +24,12 @@ const bodyFont = Manrope({
 
 export const metadata: Metadata = {
   title: "Mittlemarch | Coming Soon",
-  description: "A cinematic teaser landing page for the upcoming MMORPG set in the world of Mittlemarch."
+  description: "A cinematic teaser landing page for the upcoming MMORPG set in the world of Mittlemarch.",
+  icons: {
+    icon: "/images/mittlemarch-logo-removebg.png",
+    shortcut: "/images/mittlemarch-logo-removebg.png",
+    apple: "/images/mittlemarch-logo-removebg.png"
+  }
 };
 
 export default function RootLayout({

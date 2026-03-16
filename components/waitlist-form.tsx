@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useMemo, useState } from "react";
+import { FormEvent, KeyboardEvent, useEffect, useId, useMemo, useRef, useState } from "react";
 
 import { siteContent } from "@/config/world";
 
@@ -153,7 +153,7 @@ export function WaitlistForm() {
                     options={playstyles}
                   />
                   <SelectField
-                    label="Interested in Alpha Testing"
+                    label="Alpha Testing Interest"
                     value={form.alphaTesting}
                     onChange={(value) => updateField("alphaTesting", value)}
                     options={["Yes", "No"]}
@@ -192,16 +192,9 @@ export function WaitlistForm() {
               <p className="section-kicker">Why Join Early</p>
               <ul className="mt-6 space-y-5 font-[family-name:var(--font-serif)] text-2xl leading-relaxed text-stone-200/82">
                 <li>Be first to hear about alpha testing, reveals, and faction announcements.</li>
-                <li>Help shape the future of Mittlemarch by telling us what kind of MMORPG world you want to inhabit.</li>
+                <li>Help shape the future of Mittlemarch by telling us what kind of world you want to inhabit.</li>
                 <li>Give your community a rally point before the first campaign begins.</li>
               </ul>
-
-              <div className="mt-8 rounded-[24px] border border-white/10 bg-white/5 p-6">
-                <p className="text-xs uppercase tracking-[0.3em] text-amber-200/75">Backend Ready</p>
-                <p className="mt-3 text-base leading-relaxed text-stone-300">
-                  The submit flow is now wired for Supabase through the server route, so you can keep the frontend stable as the backend grows.
-                </p>
-              </div>
             </aside>
           </div>
         </SectionReveal>
@@ -250,20 +243,138 @@ function SelectField({
   onChange,
   options
 }: SharedFieldProps & { options: string[] }) {
+  const [open, setOpen] = useState(false);
+  const fieldId = useId();
+  const wrapperRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (!open) {
+      return;
+    }
+
+    const handlePointerDown = (event: MouseEvent) => {
+      if (!wrapperRef.current?.contains(event.target as Node)) {
+        setOpen(false);
+      }
+    };
+
+    window.addEventListener("mousedown", handlePointerDown);
+
+    return () => window.removeEventListener("mousedown", handlePointerDown);
+  }, [open]);
+
+  const selectedIndex = Math.max(
+    0,
+    options.findIndex((option) => option === value)
+  );
+
+  const moveSelection = (direction: 1 | -1) => {
+    const nextIndex = (selectedIndex + direction + options.length) % options.length;
+    onChange(options[nextIndex]);
+  };
+
+  const handleKeyDown = (event: KeyboardEvent<HTMLButtonElement>) => {
+    if (event.key === "ArrowDown") {
+      event.preventDefault();
+      if (!open) {
+        setOpen(true);
+        return;
+      }
+
+      moveSelection(1);
+    }
+
+    if (event.key === "ArrowUp") {
+      event.preventDefault();
+      if (!open) {
+        setOpen(true);
+        return;
+      }
+
+      moveSelection(-1);
+    }
+
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      setOpen((current) => !current);
+    }
+
+    if (event.key === "Escape") {
+      setOpen(false);
+    }
+  };
+
   return (
     <label className="block">
       <span className="mb-2 block text-sm uppercase tracking-[0.24em] text-stone-300">{label}</span>
-      <select
-        value={value}
-        onChange={(event) => onChange(event.target.value)}
-        className="w-full rounded-2xl border border-white/10 bg-black/20 px-4 py-3 text-stone-100 outline-none transition focus:border-amber-300/40 focus:bg-black/30"
-      >
-        {options.map((option) => (
-          <option key={option} value={option}>
-            {option}
-          </option>
-        ))}
-      </select>
+      <div ref={wrapperRef} className="relative">
+        <button
+          id={fieldId}
+          type="button"
+          aria-haspopup="listbox"
+          aria-expanded={open}
+          aria-labelledby={`${fieldId}-label ${fieldId}`}
+          onClick={() => setOpen((current) => !current)}
+          onKeyDown={handleKeyDown}
+          className={`w-full rounded-[22px] border px-4 py-3 text-left transition outline-none ${
+            open
+              ? "border-amber-300/45 bg-[linear-gradient(180deg,rgba(42,28,13,0.55),rgba(12,16,24,0.94))] shadow-[0_0_0_1px_rgba(242,204,143,0.16),0_0_32px_rgba(213,154,67,0.14)]"
+              : "border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(8,12,18,0.92))] shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] hover:border-amber-200/20 hover:bg-[linear-gradient(180deg,rgba(255,255,255,0.1),rgba(10,14,22,0.94))]"
+          }`}
+        >
+          <span className="block text-[11px] uppercase tracking-[0.34em] text-amber-200/60">
+            Choose a path
+          </span>
+          <span className="mt-1 block font-[family-name:var(--font-serif)] text-xl leading-none text-stone-100">
+            {value}
+          </span>
+          <span className="pointer-events-none absolute inset-y-0 right-4 flex items-center text-amber-100/85">
+            <svg
+              viewBox="0 0 20 20"
+              aria-hidden="true"
+              className={`h-4 w-4 fill-current transition ${open ? "rotate-180" : ""}`}
+            >
+              <path d="M5.2 7.4a1 1 0 0 1 1.4 0L10 10.8l3.4-3.4a1 1 0 1 1 1.4 1.4l-4.1 4.1a1 1 0 0 1-1.4 0L5.2 8.8a1 1 0 0 1 0-1.4Z" />
+            </svg>
+          </span>
+        </button>
+
+        {open ? (
+          <div className="absolute left-0 right-0 top-[calc(100%+0.65rem)] z-20 overflow-hidden rounded-[24px] border border-amber-200/18 bg-[linear-gradient(180deg,rgba(14,19,28,0.98),rgba(8,11,18,0.98))] p-2 shadow-[0_30px_80px_rgba(0,0,0,0.55),inset_0_1px_0_rgba(255,255,255,0.05)] backdrop-blur-xl">
+            <ul role="listbox" aria-labelledby={fieldId} className="space-y-1">
+              {options.map((option) => {
+                const isSelected = option === value;
+
+                return (
+                  <li key={option}>
+                    <button
+                      type="button"
+                      role="option"
+                      aria-selected={isSelected}
+                      onClick={() => {
+                        onChange(option);
+                        setOpen(false);
+                      }}
+                      className={`flex w-full items-center justify-between rounded-[18px] px-4 py-3 text-left transition ${
+                        isSelected
+                          ? "bg-amber-300/12 text-amber-50 shadow-[inset_0_0_0_1px_rgba(242,204,143,0.18)]"
+                          : "text-stone-300 hover:bg-white/5 hover:text-stone-100"
+                      }`}
+                    >
+                      <span className="font-[family-name:var(--font-serif)] text-lg">{option}</span>
+                      <span
+                        className={`h-2.5 w-2.5 rounded-full transition ${
+                          isSelected ? "bg-amber-200 shadow-[0_0_14px_rgba(242,204,143,0.55)]" : "bg-white/10"
+                        }`}
+                      />
+                    </button>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        ) : null}
+      </div>
     </label>
   );
 }

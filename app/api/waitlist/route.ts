@@ -41,15 +41,17 @@ function validatePayload(body: WaitlistPayload) {
 }
 
 export async function POST(request: Request) {
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseUrl = process.env.SUPABASE_URL ?? process.env.NEXT_PUBLIC_SUPABASE_URL;
   const supabaseKey =
-    process.env.SUPABASE_SERVICE_ROLE_KEY ?? process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
+    process.env.SUPABASE_SECRET_KEY ??
+    process.env.SUPABASE_SERVER_KEY ??
+    process.env.SUPABASE_SERVICE_ROLE_KEY;
 
   if (!supabaseUrl || !supabaseKey) {
     return NextResponse.json(
       {
         ok: false,
-        error: "Server configuration is incomplete."
+        error: "Server configuration is incomplete. Add SUPABASE_SECRET_KEY to .env.local."
       },
       { status: 500 }
     );
@@ -68,14 +70,21 @@ export async function POST(request: Request) {
     );
   }
 
+  const headers: Record<string, string> = {
+    "Content-Type": "application/json",
+    apikey: supabaseKey,
+    Prefer: "return=representation"
+  };
+
+  // Legacy anon/service_role keys are JWTs and can be used as Bearer tokens.
+  // New publishable/secret keys are not JWTs and should not be sent in Authorization.
+  if (supabaseKey.split(".").length === 3) {
+    headers.Authorization = `Bearer ${supabaseKey}`;
+  }
+
   const response = await fetch(`${supabaseUrl}/rest/v1/waitlist_signups`, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      apikey: supabaseKey,
-      Authorization: `Bearer ${supabaseKey}`,
-      Prefer: "return=representation"
-    },
+    headers,
     body: JSON.stringify(validated.data)
   });
 

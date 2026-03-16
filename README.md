@@ -65,12 +65,36 @@ The waitlist form currently:
 
 To finish the Supabase setup:
 
-1. Add your project keys to `.env.local`.
+1. Add your server env vars to `.env.local`.
 2. Run the SQL in `supabase/waitlist.sql` inside the Supabase SQL editor.
-3. Keep `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` set.
-4. Optionally add `SUPABASE_SERVICE_ROLE_KEY` for a stricter server-only setup.
+3. Set `SUPABASE_URL`.
+4. Set `SUPABASE_SECRET_KEY`.
 
-The route will use `SUPABASE_SERVICE_ROLE_KEY` if present, otherwise it falls back to the publishable key and the insert policy from the SQL file.
+The route now requires a server-only key. It will use `SUPABASE_SECRET_KEY` first and still accepts legacy `SUPABASE_SERVICE_ROLE_KEY`, but it no longer falls back to the publishable key.
+
+Recommended `.env.local`:
+
+```env
+SUPABASE_URL=https://your-project.supabase.co
+SUPABASE_SECRET_KEY=your_sb_secret_key_here
+NEXT_PUBLIC_APP_URL=http://localhost:3000
+```
+
+Security checklist:
+
+1. Keep `SUPABASE_SECRET_KEY` only in `.env.local` locally and only in server environment variables in deployment.
+2. Never prefix the secret with `NEXT_PUBLIC_`.
+3. Never import `process.env.SUPABASE_SECRET_KEY` from a client component marked with `"use client"`.
+4. Only access the secret from server files such as `app/api/**`, server actions, or other server-only modules.
+5. If you accidentally expose the key, rotate it immediately in the Supabase dashboard and update the environment variable in your local machine and hosting provider.
+
+Emergency response if the key is exposed:
+
+1. Rotate the secret key in Supabase immediately.
+2. Replace the old key in `.env.local` and in your deployment provider's environment settings.
+3. Restart your local dev server and redeploy the app.
+4. Check recent insert traffic in Supabase for abuse or unexpected volume.
+5. Search the repo history for the old key and remove it from git history if it was ever committed.
 
 The form payload already includes:
 

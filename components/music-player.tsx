@@ -27,7 +27,18 @@ export function AudioPlayer() {
         setIsPlaying(false);
       });
 
+    const syncPlaybackState = () => {
+      setIsPlaying(!audio.paused);
+    };
+
+    audio.addEventListener("play", syncPlaybackState);
+    audio.addEventListener("pause", syncPlaybackState);
+    audio.addEventListener("ended", syncPlaybackState);
+
     return () => {
+      audio.removeEventListener("play", syncPlaybackState);
+      audio.removeEventListener("pause", syncPlaybackState);
+      audio.removeEventListener("ended", syncPlaybackState);
       audio.pause();
       audioRef.current = null;
     };
@@ -93,7 +104,7 @@ export function AudioPlayer() {
         <div className="flex-1">
           <p className="text-sm uppercase tracking-[0.26em] text-stone-200">Mittlemarch Theme</p>
           <p className="mt-1 text-sm text-stone-400">
-            {enabled ? "Music enabled" : "Autoplay muted until you awaken the score"}
+            {enabled ? (isPlaying ? "Music enabled" : "Music disabled") : "Autoplay muted until you awaken the score"}
           </p>
         </div>
 

@@ -7,10 +7,10 @@ export const siteContent = {
     { label: "Join the Waitlist", href: "#waitlist" }
   ],
   hero: {
-    eyebrow: "An MMORPG teaser from a forgotten age",
+    eyebrow: "An Adventure from a forgotten age",
     title: `Enter the World of ${WORLD_NAME}`,
     subtitle:
-      "A new MMORPG adventure is coming. Ancient kingdoms stir, forgotten powers awaken, and the fate of Mittlemarch will belong to those bold enough to claim it.",
+      "A new adventure is coming. Ancient kingdoms stir, forgotten powers awaken, and the fate of Mittlemarch will belong to those bold enough to claim it.",
     primaryCta: "Join the Waitlist",
     secondaryCta: "Discover the World"
   },
@@ -23,25 +23,29 @@ export const siteContent = {
   features: [
     {
       title: "Ancient Kingdoms",
-      description: "Explore ruins, citadels, and lost dynasties carved into the bones of the realm."
+      description: "Explore ruins, citadels, and lost dynasties carved into the bones of the realm.",
+      image: "/images/ancient-kingdom.png"
     },
     {
       title: "Epic Adventures",
-      description: "Delve into dungeons, hunt mythical beasts, and uncover relics veiled by legend."
+      description: "Delve into dungeons, hunt mythical beasts, and uncover relics veiled by legend.",
+      image: "/images/epic-adventure.png"
     },
     {
       title: "Faction Conflict",
-      description: "Choose your allegiance and influence who claims the future of Mittlemarch."
+      description: "Choose your allegiance and influence who claims the future of Mittlemarch.",
+      image: "/images/faction-conflict.png"
     },
     {
       title: "Living World",
-      description: "A dynamic frontier of secrets, threats, and stories waiting to awaken."
+      description: "A dynamic frontier of secrets, threats, and stories waiting to awaken.",
+      image: "/images/living-world.png"
     }
   ],
   gallery: {
     title: "Glimpses from the Veil",
     description:
-      "Replace these placeholders with concept art, key art, or environmental stills as the world of Mittlemarch comes into focus.",
+      "This concept art displays only a small glimpse of the greater adventures that will make up the world of Mittlemarch as the lore comes into focus.",
     items: [
       {
         title: "The Crownwatch Range",
@@ -68,6 +72,11 @@ export const siteContent = {
   },
   footer: {
     tagline: `Coming Soon to the World of ${WORLD_NAME}`,
-    socials: ["Discord", "X / Twitter", "YouTube", "Email"]
+    socials: [
+      { label: "Discord", href: "#top" },
+      { label: "X / Twitter", href: "https://x.com/mittlemarch" },
+      { label: "YouTube", href: "#top" },
+      { label: "Email", href: "mailto:mittlemarch.crusades@gmail.com" }
+    ]
   }
 };

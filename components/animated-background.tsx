@@ -6,18 +6,24 @@ import { useRef } from "react";
 
 const HERO_ART = "/images/mittlemarch-cavalry.jpg";
 const EMBERS = [
-  { left: "8%", bottom: "9%", width: 4, height: 4, delay: "0s", duration: "7.8s", driftX: "18px", rise: "-120px", rotate: "18deg", opacity: 0.9 },
-  { left: "16%", bottom: "11%", width: 6, height: 3, delay: "0.7s", duration: "9.4s", driftX: "42px", rise: "-168px", rotate: "38deg", opacity: 0.8 },
-  { left: "21%", bottom: "7%", width: 3, height: 3, delay: "1.4s", duration: "6.8s", driftX: "-16px", rise: "-132px", rotate: "-14deg", opacity: 0.78 },
-  { left: "29%", bottom: "12%", width: 5, height: 3, delay: "2.1s", duration: "8.7s", driftX: "26px", rise: "-152px", rotate: "24deg", opacity: 0.88 },
-  { left: "37%", bottom: "8%", width: 4, height: 4, delay: "0.9s", duration: "7.1s", driftX: "-24px", rise: "-116px", rotate: "-22deg", opacity: 0.72 },
-  { left: "43%", bottom: "13%", width: 6, height: 4, delay: "3.1s", duration: "10.2s", driftX: "56px", rise: "-188px", rotate: "41deg", opacity: 0.84 },
-  { left: "51%", bottom: "9%", width: 3, height: 3, delay: "1.8s", duration: "6.6s", driftX: "14px", rise: "-110px", rotate: "16deg", opacity: 0.76 },
-  { left: "58%", bottom: "12%", width: 5, height: 3, delay: "2.6s", duration: "8.9s", driftX: "-36px", rise: "-164px", rotate: "-35deg", opacity: 0.82 },
-  { left: "64%", bottom: "7%", width: 4, height: 4, delay: "0.5s", duration: "7.5s", driftX: "22px", rise: "-124px", rotate: "19deg", opacity: 0.7 },
-  { left: "71%", bottom: "10%", width: 6, height: 3, delay: "3.5s", duration: "9.8s", driftX: "-48px", rise: "-176px", rotate: "-44deg", opacity: 0.86 },
-  { left: "77%", bottom: "8%", width: 3, height: 3, delay: "1.1s", duration: "6.9s", driftX: "17px", rise: "-118px", rotate: "14deg", opacity: 0.74 },
-  { left: "84%", bottom: "11%", width: 5, height: 4, delay: "2.9s", duration: "8.4s", driftX: "-28px", rise: "-146px", rotate: "-28deg", opacity: 0.8 }
+  { left: "6%", bottom: "9%", width: 6, height: 6, delay: "0s", duration: "7.8s", driftX: "26px", rise: "-138px", rotate: "18deg", opacity: 0.92 },
+  { left: "11%", bottom: "12%", width: 8, height: 4, delay: "0.5s", duration: "9.1s", driftX: "54px", rise: "-184px", rotate: "34deg", opacity: 0.84 },
+  { left: "16%", bottom: "8%", width: 5, height: 5, delay: "1.2s", duration: "6.9s", driftX: "-22px", rise: "-126px", rotate: "-18deg", opacity: 0.8 },
+  { left: "22%", bottom: "11%", width: 7, height: 4, delay: "2.1s", duration: "8.7s", driftX: "32px", rise: "-160px", rotate: "28deg", opacity: 0.9 },
+  { left: "27%", bottom: "6%", width: 4, height: 4, delay: "0.8s", duration: "6.4s", driftX: "-18px", rise: "-112px", rotate: "-15deg", opacity: 0.74 },
+  { left: "33%", bottom: "13%", width: 9, height: 5, delay: "2.8s", duration: "10.4s", driftX: "62px", rise: "-202px", rotate: "42deg", opacity: 0.86 },
+  { left: "38%", bottom: "9%", width: 6, height: 6, delay: "1.6s", duration: "7.5s", driftX: "18px", rise: "-134px", rotate: "16deg", opacity: 0.78 },
+  { left: "43%", bottom: "7%", width: 5, height: 5, delay: "0.9s", duration: "6.7s", driftX: "-30px", rise: "-120px", rotate: "-24deg", opacity: 0.76 },
+  { left: "48%", bottom: "12%", width: 8, height: 4, delay: "3.1s", duration: "9.7s", driftX: "44px", rise: "-178px", rotate: "36deg", opacity: 0.88 },
+  { left: "53%", bottom: "8%", width: 4, height: 4, delay: "1.9s", duration: "6.3s", driftX: "16px", rise: "-108px", rotate: "14deg", opacity: 0.72 },
+  { left: "58%", bottom: "11%", width: 7, height: 4, delay: "2.4s", duration: "8.9s", driftX: "-40px", rise: "-170px", rotate: "-33deg", opacity: 0.84 },
+  { left: "62%", bottom: "6%", width: 6, height: 6, delay: "0.4s", duration: "7.1s", driftX: "24px", rise: "-128px", rotate: "20deg", opacity: 0.76 },
+  { left: "67%", bottom: "13%", width: 9, height: 5, delay: "3.6s", duration: "10.1s", driftX: "-56px", rise: "-194px", rotate: "-41deg", opacity: 0.9 },
+  { left: "72%", bottom: "9%", width: 5, height: 5, delay: "1.1s", duration: "6.8s", driftX: "20px", rise: "-118px", rotate: "17deg", opacity: 0.74 },
+  { left: "77%", bottom: "7%", width: 4, height: 4, delay: "2.7s", duration: "7.4s", driftX: "-26px", rise: "-136px", rotate: "-21deg", opacity: 0.7 },
+  { left: "82%", bottom: "11%", width: 8, height: 5, delay: "3.2s", duration: "9.3s", driftX: "-34px", rise: "-164px", rotate: "-29deg", opacity: 0.82 },
+  { left: "87%", bottom: "8%", width: 6, height: 6, delay: "1.4s", duration: "7.6s", driftX: "28px", rise: "-142px", rotate: "22deg", opacity: 0.78 },
+  { left: "91%", bottom: "12%", width: 7, height: 4, delay: "2.2s", duration: "8.5s", driftX: "-20px", rise: "-154px", rotate: "-18deg", opacity: 0.8 }
 ] as const;
 
 export function AnimatedBackground() {
