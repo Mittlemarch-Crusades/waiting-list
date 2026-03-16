@@ -6,6 +6,7 @@ import { siteContent } from "@/config/world";
 
 import { SectionHeading } from "./section-heading";
 import { SectionReveal } from "./section-reveal";
+import { TurnstileWidget } from "./turnstile-widget";
 
 type FormState = {
   email: string;
@@ -26,15 +27,24 @@ const initialState: FormState = {
 const playstyles = ["PvP", "PvE", "Exploration", "Crafting", "Raids"];
 
 export function WaitlistForm() {
+  const turnstileSiteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ?? "";
+  const captchaEnabled = turnstileSiteKey !== "";
   const [form, setForm] = useState<FormState>(initialState);
   const [errors, setErrors] = useState<Partial<Record<keyof FormState, string>>>({});
   const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error" | "exists">(
     "idle"
   );
   const [serverMessage, setServerMessage] = useState<string>("");
+  const [honeypot, setHoneypot] = useState("");
+  const [turnstileToken, setTurnstileToken] = useState("");
+  const [turnstileResetNonce, setTurnstileResetNonce] = useState(0);
 
   const isValid = useMemo(() => {
-    return form.email.trim() !== "" && /\S+@\S+\.\S+/.test(form.email) && form.favoriteMmorpg.trim() !== "";
+    return (
+      form.email.trim() !== "" &&
+      /\S+@\S+\.\S+/.test(form.email) &&
+      form.favoriteMmorpg.trim() !== ""
+    );
   }, [form.email, form.favoriteMmorpg]);
 
   const validate = () => {
@@ -66,11 +76,19 @@ export function WaitlistForm() {
       return;
     }
 
+    if (captchaEnabled && !turnstileToken) {
+      setServerMessage("Please complete the CAPTCHA challenge.");
+      setStatus("error");
+      return;
+    }
+
     setStatus("submitting");
     setServerMessage("");
 
     const payload = {
-      ...form
+      ...form,
+      website: honeypot,
+      turnstileToken
     };
 
     try {
@@ -95,11 +113,17 @@ export function WaitlistForm() {
       }
 
       setForm(initialState);
+      setHoneypot("");
       setStatus("success");
       setServerMessage("");
     } catch {
       setStatus("error");
       setServerMessage("Network trouble kept us from recording your name. Please try again.");
+    } finally {
+      if (captchaEnabled) {
+        setTurnstileToken("");
+        setTurnstileResetNonce((current) => current + 1);
+      }
     }
   };
 
@@ -118,6 +142,22 @@ export function WaitlistForm() {
           <div className="grid gap-8 lg:grid-cols-[1.05fr,0.95fr]">
             <div className="panel gold-frame p-8 sm:p-10">
               <form className="space-y-5" onSubmit={handleSubmit} noValidate>
+                <div
+                  aria-hidden="true"
+                  className="absolute left-[-10000px] top-auto h-px w-px overflow-hidden"
+                >
+                  <label htmlFor="website">Website</label>
+                  <input
+                    id="website"
+                    name="website"
+                    type="text"
+                    tabIndex={-1}
+                    autoComplete="off"
+                    value={honeypot}
+                    onChange={(event) => setHoneypot(event.target.value)}
+                  />
+                </div>
+
                 <div className="grid gap-5 sm:grid-cols-2">
                   <Field
                     label="Email"
@@ -160,12 +200,33 @@ export function WaitlistForm() {
                   />
                 </div>
 
-                <button type="submit" disabled={!isValid || status === "submitting"} className="button-primary w-full disabled:cursor-not-allowed disabled:opacity-50">
+                {captchaEnabled ? (
+                  <TurnstileWidget
+                    siteKey={turnstileSiteKey}
+                    resetNonce={turnstileResetNonce}
+                    onChange={(token) => {
+                      setTurnstileToken(token);
+                      if (token) {
+                        setServerMessage("");
+                      }
+                    }}
+                    onError={(message) => {
+                      setServerMessage(message);
+                    }}
+                  />
+                ) : null}
+
+                <button
+                  type="submit"
+                  disabled={!isValid || status === "submitting"}
+                  className="button-primary w-full disabled:cursor-not-allowed disabled:opacity-50"
+                >
                   {status === "submitting" ? "Calling the banners..." : "Join the Waitlist"}
                 </button>
 
                 <p className="text-sm text-stone-400">
-                  Signups are sent a securely stored database for future communications and early access.
+                  Signups are screened for spam, rate limited, and stored securely for future
+                  communications and early access.
                 </p>
 
                 {status === "success" ? (
@@ -176,7 +237,8 @@ export function WaitlistForm() {
 
                 {status === "error" ? (
                   <p className="rounded-2xl border border-rose-300/20 bg-rose-400/10 px-4 py-3 text-sm text-rose-200">
-                    {serverMessage || "A few details still need attention before we can add you to the waitlist."}
+                    {serverMessage ||
+                      "A few details still need attention before we can add you to the waitlist."}
                   </p>
                 ) : null}
 
@@ -192,7 +254,10 @@ export function WaitlistForm() {
               <p className="section-kicker">Why Join Early</p>
               <ul className="mt-6 space-y-5 font-[family-name:var(--font-serif)] text-2xl leading-relaxed text-stone-200/82">
                 <li>Be first to hear about alpha testing, reveals, and faction announcements.</li>
-                <li>Help shape the future of Mittlemarch by telling us what kind of world you want to inhabit.</li>
+                <li>
+                  Help shape the future of Mittlemarch by telling us what kind of world you want to
+                  inhabit.
+                </li>
                 <li>Give your community a rally point before the first campaign begins.</li>
               </ul>
             </aside>
@@ -364,7 +429,9 @@ function SelectField({
                       <span className="font-[family-name:var(--font-serif)] text-lg">{option}</span>
                       <span
                         className={`h-2.5 w-2.5 rounded-full transition ${
-                          isSelected ? "bg-amber-200 shadow-[0_0_14px_rgba(242,204,143,0.55)]" : "bg-white/10"
+                          isSelected
+                            ? "bg-amber-200 shadow-[0_0_14px_rgba(242,204,143,0.55)]"
+                            : "bg-white/10"
                         }`}
                       />
                     </button>

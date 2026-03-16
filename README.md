@@ -164,6 +164,47 @@ Do not put these in GitHub repository secrets for normal Netlify Git-based deplo
 - The site builds locally with `npm run build`.
 - The site deploys successfully on Netlify.
 
+## Public Repo Checklist
+
+Use this before and after making the repository public:
+
+1. Confirm no real secrets exist in committed files.
+2. Confirm `.env.local` and any other `.env*` files stay ignored by git.
+3. Check git history for any old leaked keys before assuming the repo is safe.
+4. Keep `SUPABASE_SECRET_KEY` only in Netlify env vars and local `.env.local`.
+5. Never expose a secret through `NEXT_PUBLIC_*`.
+6. Keep RLS enabled on `waitlist_signups` and avoid public read policies.
+7. If a secret was ever pushed, rotate it in Supabase immediately.
+8. Re-test the live waitlist form after any key rotation.
+
+## Spam Protection
+
+The waitlist now includes:
+
+- a hidden honeypot field
+- server-side rate limiting backed by Supabase
+- optional Cloudflare Turnstile CAPTCHA
+
+### Turnstile Setup
+
+If you want CAPTCHA enabled in production, add these variables locally and in Netlify:
+
+```env
+NEXT_PUBLIC_TURNSTILE_SITE_KEY=your-turnstile-site-key
+TURNSTILE_SECRET_KEY=your-turnstile-secret-key
+```
+
+If those keys are not present, the waitlist still works and keeps the honeypot plus rate limiting active.
+
+### Rate Limiting
+
+Rate limiting is enforced server-side using hashed IP entries stored in `public.waitlist_request_log`.
+The current rule is:
+
+- 5 attempts per 15 minutes per connection
+
+The app stores only a hash of the request IP, not the raw IP address.
+
 Security checklist:
 
 1. Keep `SUPABASE_SECRET_KEY` only in `.env.local` locally and only in server environment variables in deployment.
