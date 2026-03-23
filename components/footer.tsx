@@ -27,6 +27,13 @@ export function Footer() {
               </a>
             ))}
           </div>
+          <div className="flex flex-wrap gap-4 text-xs uppercase tracking-[0.24em] text-stone-500">
+            {siteContent.footer.legal.map((item) => (
+              <a key={item.label} href={item.href} className="transition hover:text-amber-100">
+                {item.label}
+              </a>
+            ))}
+          </div>
           <p className="text-sm text-stone-500">(c) {new Date().getFullYear()} {WORLD_NAME}. All rights reserved.</p>
         </div>
       </div>

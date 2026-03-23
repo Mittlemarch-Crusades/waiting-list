@@ -77,6 +77,10 @@ export const siteContent = {
       { label: "X / Twitter", href: "https://x.com/mittlemarch" },
       { label: "YouTube", href: "#top" },
       { label: "Email", href: "mailto:mittlemarch.crusades@gmail.com" }
+    ],
+    legal: [
+      { label: "Privacy Policy", href: "/privacy-policy" },
+      { label: "Terms of Service", href: "/terms-of-service" }
     ]
   }
 };

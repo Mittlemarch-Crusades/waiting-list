@@ -225,6 +225,12 @@ export function WaitlistForm() {
                 </button>
 
                 <p className="text-sm text-stone-400">
+                  By signing up, you agree to receive updates about Mittlemarch, including
+                  development progress, early access opportunities, and announcements. You can
+                  unsubscribe at any time.
+                </p>
+
+                <p className="text-sm text-stone-400">
                   Signups are screened for spam, rate limited, and stored securely for future
                   communications and early access.
                 </p>
